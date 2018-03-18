@@ -11,12 +11,9 @@ package ti.pinchview;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
-@Kroll.module(name="Pinch", id="ti.pinchview")
-public class PinchModule extends KrollModule
-{
-	public PinchModule()
-	{
+@Kroll.module(name = "Pinch", id = "ti.pinchview")
+public class PinchModule extends KrollModule {
+	public PinchModule() {
 		super();
 	}
 }
-

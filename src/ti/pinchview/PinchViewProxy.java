@@ -14,36 +14,30 @@ import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
 
-
-@Kroll.proxy(creatableInModule=PinchModule.class)
-public class PinchViewProxy extends TiViewProxy
-{
+@Kroll.proxy(creatableInModule = PinchModule.class)
+public class PinchViewProxy extends TiViewProxy {
 	private UIPinchView pinchView;
 
 	// Constructor
-	public PinchViewProxy()
-	{
+	public PinchViewProxy() {
 		super();
 	}
 
 	@Override
-	public TiUIView createView(Activity activity)
-	{
+	public TiUIView createView(Activity activity) {
 		pinchView = new UIPinchView(this);
 		return pinchView;
 	}
-	
+
 	@Kroll.setProperty
 	@Kroll.method
-	public void setMaxZoomValue(float maxZoom)
-	{
+	public void setMaxZoomValue(float maxZoom) {
 		pinchView.setMaxZoomValue(maxZoom);
 	}
-	
+
 	@Kroll.setProperty
 	@Kroll.method
-	public void setMinZoomValue(float minZoom)
-	{
+	public void setMinZoomValue(float minZoom) {
 		pinchView.setMinZoomValue(minZoom);
 	}
 }
