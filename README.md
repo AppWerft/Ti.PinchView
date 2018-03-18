@@ -2,7 +2,7 @@
 
 This is fork of the module of Joaquín Lovera <img src="https://avatars3.githubusercontent.com/u/4253527?s=460&v=4" width=50 />
 
-Only the iOS version of TiView has apinch event. With this event you can use it for android too. In my last project I use it in addition to Ti.CanvasView to zoom the chart.
+Only the iOS version of TiView has a pinch event. With this event you can use it for android too. In my last project I use it in addition to Ti.CanvasView to zoom a solr facet driven chart.
 
 ## Usage
 
