@@ -12,7 +12,7 @@ var window = Ti.UI.createWindow({
 
 
 // TODO: write your module tests here
-var multitouch = require('jp.co.so2.pinch');
+var multitouch = require('ti.pinchview');
 
 var pinchView = multitouch.createPinchView({
 	top:0,
