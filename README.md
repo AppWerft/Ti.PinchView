@@ -4,6 +4,10 @@ This is fork of the module of Joaquín Lovera <img src="https://avatars3.githubu
 
 Only the iOS version of TiView has a pinch event. With this event you can use it for android too. In my last project I use it in addition to Ti.CanvasView to zoom a solr facet driven chart.
 
+<img src="https://raw.githubusercontent.com/AppWerft/Ti.PinchView/master/screen.png" width=200 />
+
+(For zooming the graphic in the top right corner)
+
 ## Usage
 
 ```javascript
