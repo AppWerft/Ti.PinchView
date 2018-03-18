@@ -2,17 +2,17 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 0.1
-apiversion: 2
+version: 4.0.0
+apiversion: 4
 description: A simple view for Android that can intercept pinch events.
-author: Jim Borden
+author: Jim Borden, Rainer Schleevoigt
 license: MIT License
-copyright: Copyright (c) 2012 Sotsu, Inc.
-
+copyright: Copyright (c) 2018 Appwerft.
+architectures: arm64-v8a armeabi-v7a x86
 
 # these should not be edited
 name: pinch
-moduleid: jp.co.so2.pinch
+moduleid: ti.pinchview
 guid: 541c4793-1eb7-4354-896b-60e899a5b77b
 platform: android
-minsdk: 1.8.1
+minsdk: 7.0.0
