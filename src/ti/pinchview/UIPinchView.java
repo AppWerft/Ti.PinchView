@@ -48,8 +48,6 @@ public class UIPinchView extends TiUIView {
 			maxZoom = d.getDouble("maxZoomValue").floatValue();
 		if (d.containsKeyAndNotNull("minZoomValue"))
 			minZoom = d.getDouble("minZoomValue").floatValue();
-
-		Log.d("UIPinchView", minZoom + " " + maxZoom);
 	}
 
 	public void setMaxZoomValue(float maxZoom) {
@@ -91,14 +89,15 @@ public class UIPinchView extends TiUIView {
 				final float x = e.getX();
 				final float y = e.getY();
 				try {
-					json.put("x", x);
-					json.put("y", y);
+					json.put("x", x / DENSITY);
+					json.put("y", y / DENSITY);
 					eventData = new KrollDict(json);
 				} catch (JSONException exc) {
 					Log.e("PinchView:onTouchEvent", exc.getMessage());
 					return false;
 				}
-				proxy.fireEvent("multiStart", eventData);
+				if (proxy.hasListeners("multiStart"))
+					proxy.fireEvent("multiStart", eventData);
 				activePointerId = e.getPointerId(0);
 				lastX = x;
 				lastY = y;
@@ -110,8 +109,8 @@ public class UIPinchView extends TiUIView {
 				final float y = e.getY(pointerIndex);
 				if (!pinchDetector.isInProgress()) {
 					try {
-						json.put("x", x - lastX);
-						json.put("y", y - lastY);
+						json.put("x", (x - lastX) / DENSITY);
+						json.put("y", (y - lastY) / DENSITY);
 						eventData = new KrollDict(json);
 					} catch (JSONException exc) {
 						Log.e("PinchView:onTouchEvent", exc.getMessage());
@@ -134,7 +133,8 @@ public class UIPinchView extends TiUIView {
 						proxy.fireEvent("click", dict);
 				}
 				activePointerId = INVALID_POINTER_ID;
-				proxy.fireEvent("multiEnd", eventData);
+				if (proxy.hasListeners("multiEnd"))
+					proxy.fireEvent("multiEnd", eventData);
 				break;
 			}
 			case MotionEvent.ACTION_POINTER_UP: {
@@ -177,7 +177,7 @@ public class UIPinchView extends TiUIView {
 					Log.e("PinchView:onScale", e.getMessage());
 				}
 				if (proxy.hasListeners("pinch"))
-				proxy.fireEvent("pinch", eventData);
+					proxy.fireEvent("pinch", eventData);
 
 				return true;
 			}
