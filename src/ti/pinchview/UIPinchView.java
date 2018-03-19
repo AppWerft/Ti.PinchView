@@ -1,6 +1,9 @@
 package ti.pinchview;
 
+import java.lang.ref.SoftReference;
+
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
 import org.json.JSONException;
@@ -8,7 +11,9 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener;
@@ -19,12 +24,21 @@ public class UIPinchView extends TiUIView {
 	private float maxZoom = 5.f;
 	private float minZoom = 0.1f;
 	private float startX;
-    private float startY;
+	private float startY;
 	private int CLICK_ACTION_THRESHOLD = 200;
+	private float DENSITY = 1;
+	private SoftReference<Display> softDisplay;
+	private DisplayMetrics dm;
+
 	public UIPinchView(TiViewProxy proxy) {
 		super(proxy);
 
 		setNativeView(tiPinchView = new PinchView(proxy.getActivity()));
+		dm = new DisplayMetrics();
+		synchronized (dm) {
+			getDisplay().getMetrics(dm);
+			DENSITY = dm.density;
+		}
 	}
 
 	@Override
@@ -72,8 +86,8 @@ public class UIPinchView extends TiUIView {
 
 			switch (action & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN: {
-				 startX = e.getX();
-		            startY = e.getY();
+				startX = e.getX();
+				startY = e.getY();
 				final float x = e.getX();
 				final float y = e.getY();
 				try {
@@ -111,14 +125,14 @@ public class UIPinchView extends TiUIView {
 			}
 			case MotionEvent.ACTION_UP: {
 				float endX = e.getX();
-	            float endY = e.getY();
-	            if (isAClick(startX, endX, startY, endY)) { 
-	            	KrollDict dict = new KrollDict();
-	            	dict.put("x", endX);
-	            	dict.put("Y", endY);
-	                if (proxy.hasListeners("click"))
-	                	proxy.fireEvent("click", dict);
-	            }
+				float endY = e.getY();
+				if (isAClick(startX, endX, startY, endY)) {
+					KrollDict dict = new KrollDict();
+					dict.put("x", endX / DENSITY);
+					dict.put("y", endY / DENSITY);
+					if (proxy.hasListeners("click"))
+						proxy.fireEvent("click", dict);
+				}
 				activePointerId = INVALID_POINTER_ID;
 				proxy.fireEvent("multiEnd", eventData);
 				break;
@@ -138,12 +152,14 @@ public class UIPinchView extends TiUIView {
 
 			return true;
 		}
-		private boolean isAClick(float startX, float endX, float startY, float endY) {
-	        float differenceX = Math.abs(startX - endX);
-	        float differenceY = Math.abs(startY - endY);
-	        return !(differenceX > CLICK_ACTION_THRESHOLD/* =5 */ || differenceY > CLICK_ACTION_THRESHOLD);
-	    } 
-		
+
+		private boolean isAClick(float startX, float endX, float startY,
+				float endY) {
+			float differenceX = Math.abs(startX - endX);
+			float differenceY = Math.abs(startY - endY);
+			return !(differenceX > CLICK_ACTION_THRESHOLD/* =5 */|| differenceY > CLICK_ACTION_THRESHOLD);
+		}
+
 		private class ScaleListener extends SimpleOnScaleGestureListener {
 			@Override
 			public boolean onScale(ScaleGestureDetector detector) {
@@ -160,11 +176,30 @@ public class UIPinchView extends TiUIView {
 				} catch (JSONException e) {
 					Log.e("PinchView:onScale", e.getMessage());
 				}
-
+				if (proxy.hasListeners("pinch"))
 				proxy.fireEvent("pinch", eventData);
 
 				return true;
 			}
+
+			@Override
+			public void onScaleEnd(ScaleGestureDetector detector) {
+				KrollDict event = new KrollDict();
+				if (proxy.hasListeners("pinchEnd"))
+					proxy.fireEvent("pinchEnd", event);
+			}
 		}
+	}
+
+	private Display getDisplay() {
+		if (softDisplay == null || softDisplay.get() == null) {
+			// we only need the window manager so it doesn't matter if the root
+			// or current activity is used
+			// for accessing it
+			softDisplay = new SoftReference<Display>(TiApplication
+					.getAppRootOrCurrentActivity().getWindowManager()
+					.getDefaultDisplay());
+		}
+		return softDisplay.get();
 	}
 }

@@ -24,6 +24,10 @@ Pincher.addEventListener("multiMove",function(e){
 });
 Pincher.addEventListener("pinch",function(e){
 });
+Pincher.addEventListener("pinchEnd",function(e){
+});
+Pincher.addEventListener("click",function(e){
+});
 win.add(Pincher);
 
 
